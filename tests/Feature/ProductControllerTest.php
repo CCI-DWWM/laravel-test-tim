@@ -99,6 +99,7 @@ class ProductControllerTest extends TestCase
             [
                 'name' => 'Example Product Test For Destroy Function',
                 'price' => 14,
+
                 'stock' => 4
             ]
         );
