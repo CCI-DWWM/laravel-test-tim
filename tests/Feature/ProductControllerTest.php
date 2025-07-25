@@ -62,7 +62,7 @@ class ProductControllerTest extends TestCase
             'stock' => 'Im not a number'
         ]);
         // je vérifie que la session n'a pas d'erreur
-        $product->assertSessionHasNoErrors();
+        $product->assertSessionHasErrors();
 
 
     }
