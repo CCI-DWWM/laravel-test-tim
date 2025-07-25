@@ -1,0 +1,16 @@
+name: test-action
+on:
+  pull_request:
+    branches: [ master ]
+env:
+  php_version: 8.4.7
+
+steps:
+  - name: Checkout project
+    uses: actions/checkout@v3
+
+  - name: Initialize PHP ${{ env.php_version }}
+    uses: shivammathur/setup-php@v2
+    with:
+      php-version: ${{ env.php_version }}
+      coverage: pcov

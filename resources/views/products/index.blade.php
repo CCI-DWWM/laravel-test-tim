@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Liste des Produits')
+{{phpversion()}}
 
 @section('content')
 <div class="row">
@@ -55,24 +56,24 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('products.show', $product) }}" 
-                                                   class="btn btn-sm btn-outline-info" 
+                                                <a href="{{ route('products.show', $product) }}"
+                                                   class="btn btn-sm btn-outline-info"
                                                    title="Voir">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ route('products.edit', $product) }}" 
-                                                   class="btn btn-sm btn-outline-warning" 
+                                                <a href="{{ route('products.edit', $product) }}"
+                                                   class="btn btn-sm btn-outline-warning"
                                                    title="Modifier">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="{{ route('products.destroy', $product) }}" 
-                                                      method="POST" 
+                                                <form action="{{ route('products.destroy', $product) }}"
+                                                      method="POST"
                                                       class="d-inline"
                                                       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" 
-                                                            class="btn btn-sm btn-outline-danger" 
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger"
                                                             title="Supprimer">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
