@@ -10,9 +10,10 @@ use Illuminate\Foundation\Testing\WithFaker;
 class ProductTest extends TestCase
 {
     use RefreshDatabase;
-// je test la une function/methode
+// je test une function/methode
     public function testCreateProduct()
     {
+        //je créé un produit
         $product = Product::create(
             [
                 'name' => 'Example Product Test',
@@ -20,8 +21,16 @@ class ProductTest extends TestCase
                 'stock' => 4
             ]
         );
+        // je stock ce produit dans une var
+        // je stock le produit créé dans une var grace a son id
         $createdProduct = Product::find($product->id);
+        $id = $product->id;
+        // je verifie que le produit ne sois pas nul
         $this->assertNotNull($createdProduct);
+        // je verifie chaque cols si elle correspand a ce que j'ai créé
+        $this->assertEquals('Example Product Test', $createdProduct->name);
+        $this->assertEquals(14, $createdProduct->price);
+        $this->assertEquals(4, $createdProduct->stock);
 
     }
 
@@ -43,6 +52,12 @@ class ProductTest extends TestCase
             'price' => 10,
             'stock' => 2
         ]);
+        // je stock le produit créé en le cherchant avec son id
+        $updateProduct = Product::find($id);
+        // je vérifie chaque cols si elle correspand au info modifier
+        $this->assertEquals('New name for the test product update', $updateProduct->name);
+        $this->assertEquals(10, $updateProduct->price);
+        $this->assertEquals(2, $updateProduct->stock);
 
         $response->assertStatus(302);
     }

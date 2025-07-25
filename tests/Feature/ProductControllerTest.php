@@ -16,26 +16,29 @@ class ProductControllerTest extends TestCase
     public function testCreateProduct()
     {
         // je créé un produit
-        $product = Product::create(
-            [
-                'name' => 'Example Product Test',
-                'price' => 14,
-                'stock' => 4
-            ]
-        );
-        // je stock le produit créé dans une var grace a son id
-        $createdProduct = Product::find($product->id);
-        $id = $product->id;
-        // je verifie que le produit ne sois pas nul
-        $this->assertNotNull($createdProduct);
-        // je verifie chaque cols si elle correspand a ce que j'ai créé
-        $this->assertEquals('Example Product Test', $createdProduct->name);
-        $this->assertEquals(14, $createdProduct->price);
-        $this->assertEquals(4, $createdProduct->stock);
-        // je vérifie que la page details du produit existe
-        $response = $this->get("products/$id");
-        $response->assertStatus(200);
+        $response = $this->post(route('products.store'), [
+            'name' => 'Example Product Test',
+            'description' => 'Tatata',
+            'price' => 14,
+            'stock' => 4
+        ]);
 
+
+        $response->assertRedirect('/products');
+        $response->assertSessionHas('success');
+
+        $response->assertStatus(302);
+
+        $page = $this->followRedirects($response);
+        // je verifie si le message de sucess est le meme que dans le controller
+        $page->assertSee('Produit ajouté avec succès !');
+
+        $this->assertDatabaseHas('products', [
+            'name' => 'Example Product Test',
+            'description' => 'Tatata',
+            'price' => 14,
+            'stock' => 4
+        ]);
 
     }
 
@@ -44,6 +47,7 @@ class ProductControllerTest extends TestCase
     {
         // je verifie le statut de la page
         $response = $this->get('/products');
+
         $response->assertStatus(200);
     }
     // Vérifier les erreurs de validation (par exemple, si le nom est vide)
@@ -53,6 +57,7 @@ class ProductControllerTest extends TestCase
         //  je créé un produit
         $product = $this->post(route('products.store'), [
             'name' => '',
+            'descripton' => 4,
             'price' => -4,
             'stock' => 'Im not a number'
         ]);
@@ -64,14 +69,16 @@ class ProductControllerTest extends TestCase
     // Modifier un produit existant et vérifier que la mise à jour est correct
     public function testUpdate()
     {
+
         // je créé un produit
         $product = Product::create(
             [
-                'name' => 'Example Product Test For Update Function',
-                'price' => 14,
-                'stock' => 4
+                'name' => 'New name for the test product update',
+                'price' => 10,
+                'stock' => 2
             ]
         );
+
 
         $id = $product->id;
     // j'update le produit
@@ -80,15 +87,16 @@ class ProductControllerTest extends TestCase
             'price' => 10,
             'stock' => 2
         ]);
-        // je stock le produit créé en le cherchant avec son id
-        $updateProduct = Product::find($id);
-        // je vérifie chaque cols si elle correspand au info modifier
-        $this->assertEquals('New name for the test product update', $updateProduct->name);
-        $this->assertEquals(10, $updateProduct->price);
-        $this->assertEquals(2, $updateProduct->stock);
+
+
+        $page = $this->followRedirects($response);
+        // je verifie si le message de sucess est le meme que dans le controller
+        $page->assertSeeText('Produit mis à jour avec succès !');
+
         // je vérifie son statut
         $response->assertStatus(302);
     }
+
 
     // Supprimer un produit et vérifier qu'il disparait de la BDD
 
@@ -99,7 +107,6 @@ class ProductControllerTest extends TestCase
             [
                 'name' => 'Example Product Test For Destroy Function',
                 'price' => 14,
-
                 'stock' => 4
             ]
         );
@@ -109,6 +116,9 @@ class ProductControllerTest extends TestCase
         $response = $this->delete(route('products.destroy', $id));
         // je verifie son statut
         $response->assertStatus(302);
+        $page = $this->followRedirects($response);
+        // je verifie si le message de sucess est le meme que dans le controller
+        $page->assertSeeText('Produit supprimé avec succès !');
         // je verifie si le produit n'est plus dans la db
         $this->assertDatabaseMissing('products', ['id' => $id]);
 
